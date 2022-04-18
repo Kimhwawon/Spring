@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC	 "-//mybatis.org//DTD Mapper 3.0//EN"
+	"http:/mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!-- 위쪽에는 마이바티스에서 사용할 xml파일임을 명시
+아래쪽 mapper태그의 namespace에 어떤 인터페이스와 연동할지 패키지부터 다 적음 -->
+<mapper namespace="com.ict.mapper.BoardMapper">
+		<sql id="search">
+			<if test="searchType != null">
+				<if test="searchType == 't'.toString()">
+					(TITLE like '%'||#{keyword}||'%') AND
+				</if>
+			
+				<if test="searchType == 'c'.toString()">
+					(CONTENT like '%'||#{keyword}||'%') AND
+				</if>
+				
+				<if test="searchType == 'w'.toString()">
+					(WRITER like '%'||#{keyword}||'%') AND
+				</if>
+				
+				<if test="searchType == 'tc'.toString()">
+					((TITLE like '%'||#{keyword}||'%') 
+						OR
+					(CONTENT like '%'||#{keyword}||'%'))AND	
+				</if>
+			
+				<if test="searchType == 'cw'.toString()">
+					((CONTENT like '%'||#{keyword}||'%')
+						OR
+					(WRITER like '%'||#{keyword}||'%')) AND
+				</if>
+				
+				<if test="searchType == 'tcw'.toString()">
+					((TITLE like '%'||#{keyword}||'%')
+						OR
+					(CONTENT like '%'||#{keyword}||'%')
+						OR
+					(WRITER like '%'||#{keyword}||'%')) AND
+				</if>		
+			</if>	
+		
+		</sql>
+	<!-- id속성에 BoardMapping에 적어둔 메서드명을
+	resultType에 리턴자료형인 BoardVO를 패키지부터 -->
+	<select id="getList" resultType="com.ict.domain.BoardVO">
+
+	<!-- <이나>과 같이 태그로 오인될 수 있는 문자를 포함하든 
+	아래와 같이 <![CDATA[실행문]]> 과 같이 실행문을
+	CDATA에 작성하면 내부의 부등호는 전부 문자로 간주됩니다. 
+	
+	태그 여닫는 문자인 < >가 쿼리문 중간에 오는경우
+	CDATA로 감싸서 해당 로직이 태그를 여닫기 위한 목적이 없음을 명시해야 한다. -->
+	<![CDATA[
+		SELECT * FROM
+			(SELECT /*+ INDEX_DESC(board_tbl pk_board) */
+			rownum rn, board_tbl.* FROM board_tbl WHERE 
+	]]>		
+		
+		
+	<!--  조건에 따른 쿼리문이 가변적으로추가될 부분 
+	이 쿼리문을 돌리면서 SearchCriteria를 돌리고 있으므로
+    SearchCriteria.searchType을 아래처럼 변수명만 적어 감지가 됨
+    
+    
+    상단의 sql태그를 이용해 명칭을 부여했으므로, 명칭만 맞추면 긴 내용을 다 넣지 않아도 됨-->
+		<include refid="search"></include>
+		
+	<!-- 글 번호를 조절하기 위한 부분 -->
+	<![CDATA[		
+			rownum <=#{pageEnd})
+				WHERE rn > #{pageStart}
+	]]>
+	<!-- getter는 #{} 내부에서 호출가능함
+	get을 뺀 나머지 메서드명을 적어주면 됨
+	맨 앞글자는 소문자-->
+	</select>
+	
+	<!-- insert구문이므로 insert태그를 써야 하고 리턴자료가 없으니 자연히 resultType도 작성안합니다. 
+	BoardVO를 입력받지만 #{}내부에는 vo.변수명이 아닌 그냥 변수명을 그대로 써주시면 됩니다. -->
+	<insert id="insert">
+	INSERT INTO board_tbl (bno, title, content, writer)
+		VALUES
+		(board_num.nextval, #{title}, #{content}, #{writer})
+	</insert>
+	
+	<select  id ="select" resultType="com.ict.domain.BoardVO">
+		SELECT * FROM board_tbl WHERE bno = #{bno}
+	</select>
+	
+	<!-- BoardMapper.java의 delete 메서드를 연결해 해당 메서드 실행시 실행될 쿼리문 작성-->
+	<delete id ="delete">
+		DELETE FROM board_tbl WHERE bno = #{bno}
+	</delete>
+	
+	<update id ="update">
+	<!-- UPDATE board_tbl SET title=?, content=?, updatedate=sysdate() WHERE bno=?
+	BoardMapper.java의 update 메서드를 연결해 해당 메서드 실행시 쿼리문 작성-->
+		UPDATE board_tbl 
+			SET 
+		title=#{title}, content=#{content}, updatedate=SYSDATE 
+			WHERE 
+		bno=#{bno}
+	</update>
+	
+	<update id ="update2">
+	<!-- UPDATE board_tbl SET title=?, content=?, updatedate=sysdate() WHERE bno=?
+	BoardMapper.java의 update 메서드를 연결해 해당 메서드 실행시 쿼리문 작성-->
+		UPDATE board_tbl 
+			SET 
+		title=#{title}, content=#{content}, updatedate=SYSDATE 
+			WHERE 
+		bno=#{bno}
+
+	</update>
+	
+	<select id="countPageNum" resultType="int">		
+		<![CDATA[
+		SELECT COUNT(*) FROM board_tbl WHERE
+		]]>
+		<!-- 여기에 sql 태그에 저장된 조건절 넣기
+		기존 코드는 검색조건에 무관하게 전체 DB글만 가져왔으므로
+		검색조건에 따른 총 글 개수를 조건에 맞게 출력하도록 수정
+		검색조건은 searchType 변수를 전달받아야 하므로
+		컨트롤러, 서비스, 메퍼쪽에도 searchType을 받을수 있게
+		getTotalBoard 호출 관련 메서드에 SearchCritrtia를 전달합니다. 
+		
+		글 개수 조회구문에도 include태그로 입력-->
+			<include refid="search"></include>
+		<![CDATA[		
+		bno > 0
+		]]>
+	</select>
+</mapper>
