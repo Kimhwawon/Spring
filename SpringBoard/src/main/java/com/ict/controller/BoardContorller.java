@@ -10,6 +10,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
@@ -25,6 +26,7 @@ import lombok.extern.log4j.Log4j;
 // 컨트롤러가 컨트롤러 기능을 할 수 있도록 처리해주세요.
 @Controller
 @Log4j
+@RequestMapping("/board")
 public class BoardContorller {
 	
 	// 컨트롤러는 Service만 호출하도록 구조를 바꿉니다.
@@ -67,7 +69,7 @@ public class BoardContorller {
 		int countPage = service.countPageNum(cri); // 131대신 실제로 DB내 글 개수를 받아옴
 		pageMaker.setTotalBoard(countPage); //calcData()호출도 되면서 순식간에 prev, next, startPage, endPage 세팅
 		model.addAttribute("pageMaker", pageMaker);
-		return "boardList";	
+		return "board/boardList";	
 	}
 	
 	
@@ -78,7 +80,7 @@ public class BoardContorller {
 	public String boardDetail(@PathVariable long bno, Model model) {
 		BoardVO board = service.select(bno);
 		model.addAttribute("board",board );
-		return "boardDetail";
+		return "board/boardDetail";
 	}
 	
 	
@@ -87,7 +89,7 @@ public class BoardContorller {
 	// 폼 페이지의 이름은 boardForm.jsp입니다. 
 	@GetMapping(value="/boardInsert")
 	public String boardInsertForm() {
-		return"boardForm";
+		return"board/boardForm";
 	}
 	// boardInsert인데 post 방식을 처리하는 메서드를 새로 만들어주세요
 	// BoardVO를 입력받도록 해 주시면 실제로는 BoardVO의 멤버변수명으로 들어오는 자료를 입력받습니다. 
@@ -100,7 +102,7 @@ public class BoardContorller {
 		log.info("들어온 데이터 디버깅 : " + board);
 		// insert로직 실행
 		service.insert(board);
-		return "redirect:/boardList";
+		return "redirect:/board/boardList";
 	}
 	
 	
@@ -129,7 +131,7 @@ public class BoardContorller {
 	//	 rttr.addAllAttributes(parameters);
 		// 삭제로직 실행
 		service.delete(bno);
-		return "redirect:/boardList";
+		return "redirect:/board/boardList";
 	}
 	
 	
@@ -143,7 +145,7 @@ public class BoardContorller {
 	public String boardUpdateForm( long bno, Model model) {
 		BoardVO board = service.select(bno);
 			model.addAttribute("board", board);
-		return "boardUpdateForm";
+		return "board/boardUpdateForm";
 	}
 	// boardUpdate를 post방식으로 접속하는 메소드를 만들겠습니다.
 	// update(BoardVO)를 실행해서, 폼에서 날려준 데이터를 토대로
@@ -169,7 +171,7 @@ public class BoardContorller {
 		//  update호출
 		service.update(board);
 		// redirect:주소?글번=getter
-		return "redirect:/boardDetail/" + board.getBno();
+		return "redirect:/board/boardDetail/" + board.getBno();
 	}
 	
 }

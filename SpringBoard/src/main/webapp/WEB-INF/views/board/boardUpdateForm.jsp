@@ -8,7 +8,7 @@
 </head>
 <body>
 	<h1>${board.bno}번글 수정페이지 입니다.  </h1>
-		<form action="/boardUpdate" method="post"><br/>
+		<form action="/board/boardUpdate" method="post"><br/>
 	
 		<input type="hidden" name="bno" value="${board.bno}">
 		제목 : <input type ="text" name="title" value="${board.title }"><br/>
