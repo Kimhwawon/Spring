@@ -5,16 +5,19 @@
 <head>
 <style>
 	#modDiv{
-	width: 300px;
+	width: 500px;
 	height: 100px;
 	background-color: lightpink;
 	position: absolute;
 	top: 50%;
 	left: 50%;
 	margin-top: -50px;
-	margin-left: -150px;
+	margin-left: -250px;
 	padding: 10px;
 	z-index: 1000;
+	}
+	#reply{
+	width: 450px;
 	}
 </style>
 <!-- 부트스트랩 주소 -->
@@ -78,15 +81,20 @@
 			</div>
 			
 			<!-- 댓글 작성 공간 -->
-			<div>
-				<div>
-					댓글 글쓴이 <input type="text" name="relpyer" id="newReplyWriter">
-				</div>
-				<div>
-					댓글 내용 <input type="text" name="reply" id="newReplyText">
-				</div>
-				<button id="replyAddBtn">댓글 추가</button>
-			</div>
+			<div class="row box-box-success">
+				<div class="box-header">
+					<h2 class="text-primary">댓글 작성</h2>
+				</div><!-- header -->
+				<div class="box-body">
+					<strong>글쓴이</strong>
+					<input type="text" id="newReplyWriter" placeholder="Replyer" class="form-control">
+					<strong>댓글내용</strong>
+					<input type="text" id="newReplyText" placeholder="Reply" class="form-control">
+				</div><!-- body -->
+				<div class ="box-footer">
+					<button type="button" class="btn btn-success" id="replyAddBtn">댓글 작성</button>
+				</div><!-- footer -->
+			</div><!-- row -->
 			
 			
 			
@@ -206,14 +214,14 @@
 				// 클릭한 요소가 this이고, 현재 button에 걸렸기 때문에
 				// this는 button입니다. button의 부모가 바로 .replyLi입니다.
 				// 즉, 클릭한 버튼과 연계된 li 태그를 replyteg 변수에 저장합니다. 
-				
 				var replytag= $(this).parent();
 				// 4월  27일 수정 :  this(button)의 부모(.replyLi)가 아닌
 				// 형제 태그 .reply의 내용을 대신 가져올수 있도록
 				// 변수 replyContent를 선언해 거기에 저장해주세요. 
-				// (hint : .sibling("요소명"); 으로 형제태그를 가져올수 있습니다. )
-				
-		 	 var replyContent= $(".reply").sibling("reply");
+			//	// (hint : .sibling("요소명"); 으로 형제태그를 가져올수 있습니다. )				
+		 		// var replyContent= $(this).prev().text(); // button의 직전 태그인 .reply의 내용을 가져오기
+		 		 var replyContent= $(this).siblings(".reply").text(); //button의 형제 중 .reply의 내용물 가져오기
+		 		// var replyContent= $(this).parent().children(".reply").text();
 				
 				
 				console.log(replytag);
@@ -227,7 +235,8 @@
 			//	alert(rno + " : " + reply); // 내부 text와 댓글번호를 alert으로 띄움
 
 				$(".modal-title").html(rno); // modal-title 부분에 글번호 입력
-				$("#reply").val(reply); // reply 영역에 리플 내용을 기입(수정/삭제)
+			//	$("#reply").val(reply); // reply 영역에 리플 내용을 기입(수정/삭제)
+			 	$("#reply").val(replyContent);
 				$("#modDiv").show("slow"); // 버튼 누르면 모달 열림
 			});
 			
