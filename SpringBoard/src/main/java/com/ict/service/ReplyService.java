@@ -14,5 +14,5 @@ public interface ReplyService {
 	
 	public void removeReply(Long rno);
 	
-
+	
 }
