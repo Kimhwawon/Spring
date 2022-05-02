@@ -33,10 +33,10 @@
 	<!-- 댓글 작성 공간 -->
 	<div>
 		<div>
-			댓글 글쓴이 <input type="text" name="relpyer" id="newReplyWriter">
+			댓글 글쓴이 <input type="text" name="reply_id" id="newReplyWriter">
 		</div>
 		<div>
-			댓글 내용 <input type="text" name="reply" id="newReplyText">
+			댓글 내용 <input type="text" name="reply_content" id="newReplyText">
 		</div>
 		<button id="replyAddBtn">댓글 추가</button>
 	</div>
@@ -103,8 +103,8 @@
 		$("#replyAddBtn").on("click", function(){
 			// 폼이 없기때문에, input태그 내에 입력된 요소를 가져와야 합니다.
 			// 버튼을 누를는 시점에, 글쓴이와 내용 내부에 적힌 문자열을 변수에 저장합니다. 
-		var replyer = $("#newReplyWriter").val();
-		var reply = $("#newReplyText").val();
+		var reply_id = $("#newReplyWriter").val();
+		var reply_content = $("#newReplyText").val();
 
 		$.ajax({
 			type : 'post',
