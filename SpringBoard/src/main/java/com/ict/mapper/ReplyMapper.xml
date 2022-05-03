@@ -33,8 +33,16 @@
 		</delete>
 	
 	<select id="getBno" resultType="long">
-	 	SELECT bno FROM board_tbl
+	 	SELECT bno FROM  reply_tbl
 	 		WHERE rno = #{rno}
 	</select>
+	
+	<!-- 0503 --> 
+	<delete id ="deleteAllReplies">
+		delete from reply_tbl
+			 WHERE bno = #{bno}
+	</delete>
+	
+	
 	</mapper>
 	

@@ -18,5 +18,10 @@ public interface ReplyMapper {
 	
 	// 0502 댓글 번호를 통해 글 번호유추하기
 	public Long getBno(Long rno);
+	
+	// 0503
+	// bno번글에 달린 댓글을 다 삭제하는 쿼리문 생성
+	public void deleteAllReplies(Long bno);
+	
 
 }

@@ -20,9 +20,12 @@ public class ReplyServiceImpl implements ReplyService {
 	@Autowired
 	private BoardMapper boardmapper;
 	
+	@Transactional // 2개이상의 db접근 군문이 사용되면 트랜잭션 적용
 	@Override
 	public void addReply(ReplyVO vo) {
 		mapper.create(vo);
+		// 댓글 번호는 ReplyVO에 들어있으므로 getter를 활용
+		boardmapper.updateReplyCount(vo.getBno(), 1);
 	}
 	
 	@Override
@@ -42,11 +45,11 @@ public class ReplyServiceImpl implements ReplyService {
 		Long bno = mapper.getBno(rno);
 		// 다음 글 삭제해야 문제 없이 글 번호를 가져옵니다. 
 		mapper.delete(rno);	
-		boardmapper.updateReplyCount(rno, -1);
+		// db에서 커밋 안하면 pending 상태로 계속 지연되니 주의
+		boardmapper.updateReplyCount(bno, -1);
 	
 	}
 	
-
 		
 	
 	

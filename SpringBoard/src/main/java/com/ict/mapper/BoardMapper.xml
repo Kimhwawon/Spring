@@ -136,4 +136,6 @@
 			SET
 		replycount = replycount + #{amount} WHERE bno = #{bno}
 	</update>
+	
+
 </mapper>

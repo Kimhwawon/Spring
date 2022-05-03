@@ -19,9 +19,6 @@
 	
 	<context:annotation-config></context:annotation-config>
 
-	<context:component-scan base-package="com.ict.service"></context:component-scan>
-	<context:component-scan base-package="com.ict.aop"></context:component-scan>
-		
 	<aop:aspectj-autoproxy></aop:aspectj-autoproxy>
 	
 	
@@ -60,7 +57,6 @@
 	<!-- 어노테이션을 거는것만으로 트랜잭선 작동하도록 도와줌 -->
 	<tx:annotation-driven/>
 	
-	<mybatis-spring:scan base-package="com.ict.mapper"/>
 	
 	
 </beans>

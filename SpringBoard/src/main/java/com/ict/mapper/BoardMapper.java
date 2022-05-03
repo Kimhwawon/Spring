@@ -49,6 +49,10 @@ public interface BoardMapper {
 	public int countPageNum(SearchCriteria cri);
 	
 	public void updateReplyCount(@Param("bno") Long bno,
-								@Param("amount") int amount);					
+								@Param("amount") int amount);
+	
+	
 
+	
+	
 }

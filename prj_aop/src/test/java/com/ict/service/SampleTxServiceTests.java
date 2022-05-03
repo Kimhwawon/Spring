@@ -18,7 +18,7 @@ public class SampleTxServiceTests {
 	
 	@Test
 	public void testInsert() {
-		String str = "abcde";
+		String str = "abcd";
 		
 		service.addData(str);
 	}
