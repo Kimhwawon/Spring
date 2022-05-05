@@ -1,12 +1,41 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<beans xmlns="http://www.springframework.org/schema/beans"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xmlns:security="http://www.springframework.org/schema/security"
-	xsi:schemaLocation="http://www.springframework.org/schema/beans 
-		http://www.springframework.org/schema/beans/spring-beans.xsd
-		http://www.springframework.org/schema/security 
-		http://www.springframework.org/schema/security/spring-security.xsd">
-
-
+<beans xmlns="http://www.springframework.org/schema/beans" 
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+	xmlns:security="http://www.springframework.org/schema/security" 
+	xsi:schemaLocation="http://www.springframework.org/schema/security 
+		http://www.springframework.org/schema/security/spring-security.xsd 
+		http://www.springframework.org/schema/beans 
+		http://www.springframework.org/schema/beans/spring-beans.xsd">
+	
+	
+	<bean id="customAccessDenied" class="com.ict.security.CustomAccessDeniedHandler"></bean>
+	<security:http>
+		
+		<!-- /secu/all 접속시 모든 유저에게 접근 허용       // 접근 가능한 권한 all-->
+		<security:intercept-url pattern="/secu/all" access="permitAll"/>
+		
+		<!-- /secu/member는 접속시 회원 권한을 가진 유저에게만 접근 허용 -->
+		<security:intercept-url pattern="/secu/member" access="hasRole('ROLE_MEMBER')"/>
+		
+		<!-- /serc/admin은 admin에게만 접근 허용 -->
+		<security:intercept-url pattern="/secu/admin" access="hasRole('ROLE_ADMIN')"/>
+	
+		<security:form-login/>
+				
+		<!-- <security:access-denied-handler error-page="/accessError" />-->
+		<security:access-denied-handler ref="customAccessDenied"/>
+		
+	</security:http>
+	
+	<!-- db없이 로그인 테스트가 가능 -->
+	<security:authentication-manager>
+		<security:authentication-provider>
+			<security:user-service>                 <!-- noop 암호화 끄기  -->
+				<security:user name="member" password="{noop}member" authorities="ROLE_MEMBER"/>
+				<security:user name="admin" password="{noop}admin" authorities="ROLE_MEMBER, ROLE_ADMIN"/>
+															               <!-- /secu/member에도 admin계정으로 로그인이 가능-->
+			</security:user-service>
+		</security:authentication-provider>
+	</security:authentication-manager>
 
 </beans>
