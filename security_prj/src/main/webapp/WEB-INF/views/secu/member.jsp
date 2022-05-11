@@ -8,6 +8,5 @@
 </head>
 <body>
 	<h1>member주소</h1>
-	
 </body>
 </html>
