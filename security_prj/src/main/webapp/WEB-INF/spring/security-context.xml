@@ -19,11 +19,11 @@
 		<!-- /secu/all로 접속시 모든 유저에게 접속 허용 -->
 		<security:intercept-url pattern="/secu/all" access="permitAll" />
 	
-		<!-- /secu/member로 접속시 회원 권한을 가진 유저에게만 접속 허용 -->
+		<!-- /secu/member로 접속시 회원 권한을 가진 유저에게만 접속 허용 
 		<security:intercept-url pattern="/secu/member" access="hasRole('ROLE_MEMBER')" />
 
-		<!-- /secu/admin로 접속시 관리자 권한을 가진 유저에게만 접속 허용 -->
-		<security:intercept-url pattern="/secu/admin" access="hasRole('ROLE_ADMIN')" />
+			 /secu/admin로 접속시 관리자 권한을 가진 유저에게만 접속 허용 
+		<security:intercept-url pattern="/secu/admin" access="hasRole('ROLE_ADMIN')" /> -->
 			
 		
 		<security:form-login login-page="/customLogin"
@@ -33,7 +33,13 @@
 
 		<security:access-denied-handler ref="customAccessDenied"/>
 		
-		<security:logout logout-url="/customLogout" invalidate-session="true" /> 
+		<security:logout logout-url="/customLogout" invalidate-session="true" 
+			delete-cookies="remember-me,JSESSIONID"/>
+								
+								<!-- 어떤 DB를 갖다 쓸꺼냐 -->				<!-- 일주일 -->
+		<security:remember-me data-source-ref="dataSource" token-validity-seconds="604800"/>
+
+		
 	
 	</security:http>
 	
