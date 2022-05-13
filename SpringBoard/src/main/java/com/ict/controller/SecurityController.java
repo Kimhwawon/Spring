@@ -19,7 +19,7 @@ import com.ict.service.SecurityService;
 import lombok.extern.log4j.Log4j;
 
 @Log4j
-@RequestMapping("/secu/*")
+@RequestMapping("/*")
 @Controller
 public class SecurityController {
 	

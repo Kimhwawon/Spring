@@ -6,6 +6,9 @@
 
 
 <mapper namespace="com.ict.mapper.MemberMapper">
+
+
+
 	<resultMap type="com.ict.domain.MemberVO" id="memberMap">
 		<id property="userId" column="userid" />
 		<result property="userId" column="userid" />
@@ -30,7 +33,7 @@
 			m.userid = #{userId}
 	</select>
 	
-	<insert id="insertMemberTbl">
+ <insert id="insertMemberTbl">
 	 	INSERT INTO MEMBER_TBL(userid, userpw, username)
 	 		VALUES
 	 	(#{userId}, #{userPw}, #{userName})
@@ -45,6 +48,6 @@
 	</foreach>
 	SELECT * 
 		FROM DUAL
-	</update>
+	</update> 
 	
 </mapper>
