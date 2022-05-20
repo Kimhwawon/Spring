@@ -225,6 +225,14 @@
 		    <version>5.0.7.RELEASE</version>
 		</dependency>
 		
+		<!--미리보기 썸네일 -->
+		<!-- https://mvnrepository.com/artifact/net.coobird/thumbnailator -->
+		<dependency>
+		    <groupId>net.coobird</groupId>
+		    <artifactId>thumbnailator</artifactId>
+		    <version>0.4.17</version>
+		</dependency>
+		
 
 
 		
