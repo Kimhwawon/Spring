@@ -4,6 +4,27 @@
 <html>
 <head>
 <style>
+
+/*uploaadResult 결과물 css  */
+	.uploadResult {
+		width:100%;
+		background-color:lightyellow;	
+	}
+	.uploadResult ul {
+		display:flex;
+		flex-flow:row;
+		justify-content:center;
+		align-items:center;
+	}
+	.uploadResult ul li {
+		list-style : none;
+		padding:10px;
+		align-content :center;
+		text-align:center;
+	}
+	.uploadResult ul li img {
+		width:100px;
+	}
 	#modDiv{
 	width: 500px;
 	height: 100px;
@@ -28,6 +49,7 @@
 <title>Insert title here</title>
 </head>
 <body>
+
 	<div class="container">
 		<h1 class="text text-primary">${board.bno}번 글 조회중 </h1>
 			<div class="row">
@@ -45,6 +67,16 @@
 				<div class="col-md-3">수정날짜 : </div>
 				<div class="col-md-3">${board.updatedate }</div>
 			</div>
+			
+			<div class="row">
+				<h3 class="text-primary">첨부파일</h3>
+					<div id ="uploadResult">
+						<ul>
+							<!-- 업로드된 파일이 들어갈 자리 -->
+						</ul>
+					</div> <!-- #uploadResult -->
+			</div><!-- row -->
+			
 			<div class="row">
 				<div class="col-md-1">
 					<a href="/board/boardList/?pageNum=${param.pageNum == null ? 1 : param.pageNum}&searchType=${param.searchType }&keyword=${param.keyword}" class="btn btn-success">글목록</a>
@@ -295,6 +327,53 @@
 					}
 				});
 			});
+			(function(){
+
+				$.getJSON("/board/getAttachList", {bno : bno}, function(arr){
+					console.log(arr);
+					
+
+					var str ="";
+					
+					$(arr).each(function(i, obj){
+		                // image type
+						if(!obj.fileType){
+							var fileCallPath = encodeURIComponent(obj.uploadPath + "/" + obj.uuid + "_" + obj.fileName);
+							
+							str += "<li "
+								+ "data-path='" + obj.uploadPath + "' data-uuid='" + obj.uuid
+								+ "' data-filename='" + obj.fileName + "' data-type='" + obj.fileType
+								+ "'><a href='/download?fileName=" + fileCallPath
+								+ "'>" + "<img src='/resources/free-icon-attached-file-1209914.png'>"
+								+ obj.fileName + "</a>"
+								+ "<span data-file=\'" + fileCallPath + "\' data-type='file'> X </span>"
+								+ "</li>";
+							
+							
+						} else {
+							//str += "<li>" + obj.fileName + "</li>";
+							var fileCallPath = encodeURIComponent(obj.uploadPath + "/s_" + obj.uuid + "_" + obj.fileName);
+							var fileCallPathOriginal = encodeURIComponent(obj.uploadPath + "/" + obj.uuid + "_" + obj.fileName);
+							
+							str += "<li "
+								+ "data-path='" + obj.uploadPath + "' data-uuid='" + obj.uuid
+								+ "' data-filename='" + obj.fileName + "' data-type='" + obj.fileType
+								+ "'><a href='/download?fileName=" + fileCallPathOriginal
+								+ "'>" + "<img src='/display?fileName="+ fileCallPath + "'>"
+								+ obj.fileName + "</a>"
+								+ "<span data-file=\'" + fileCallPath + "\' data-type='image'> X </span>"
+								+ "</li>";
+		                }
+
+		            });
+		            $("#uploadResult ul").html(str);
+		
+				
+
+				}); //end getJSON
+			})(); // 익명함수 종료
+								
+						
 				
 			
 			</script>

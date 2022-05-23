@@ -5,6 +5,9 @@ import java.util.List;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -12,8 +15,10 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import com.ict.domain.BoardAttachVO;
 import com.ict.domain.BoardVO;
 import com.ict.domain.Criteria;
 import com.ict.domain.PageMaker;
@@ -99,7 +104,12 @@ public class BoardContorller {
 	@PostMapping(value="/boardInsert")
 	public String boardInsert(BoardVO board) {
 		// 폼에서 날린 데이터 들어오는지 디버깅
-		log.info("들어온 데이터 디버깅 : " + board);
+		log.info("들어온 데이터 디버깅 : " + board);		
+		// 첨부파일 들어오는지 여부 디버깅
+		log.info("==============================");
+		if(board.getAttachList() != null) {
+			board.getAttachList().forEach(attach -> log.info(attach));
+		}
 		// insert로직 실행
 		service.insert(board);
 		return "redirect:/board/boardList";
@@ -174,6 +184,13 @@ public class BoardContorller {
 		return "redirect:/board/boardDetail/" + board.getBno();
 	}
 	
+	
+	@GetMapping(value="getAttachList", produces= MediaType.APPLICATION_JSON_UTF8_VALUE)
+	@ResponseBody
+	public ResponseEntity<List<BoardAttachVO>>getAttachList(Long bno){
+		return new ResponseEntity<>(service.getAttachList(bno), HttpStatus.OK);
+		
+	}
 }
 
 

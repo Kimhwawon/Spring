@@ -5,6 +5,7 @@
 <html>
 <head>
 <style>
+		/*uploaadResult 결과물 css  */
 	.uploadResult {
 		width:100%;
 		background-color:lightyellow;	
@@ -18,9 +19,10 @@
 	.uploadResult ul li {
 		list-style : none;
 		padding:10px;
+		
 	}
 	.uploadResult ul li img {
-		width:40px;
+		width:100px;
 	}
 
 </style>
@@ -38,6 +40,7 @@
 		글쓴이 : <input type = "text" name ="writer"><br/>
 		본문 : <textarea name ="content" rows="20" cols="100"></textarea><br/>	
 		<input id ="submitBtn" type="submit" value="글쓰기"><input type="reset" value="초기화">
+		<input type="hidden" name="${_csrf.parameterName }" value="${_csrf.token }"/>
 	</form>
 	<h3>첨부파일 영역</h3>
 		<div class="uploadDiv">
@@ -132,53 +135,40 @@
 			var uploadResult = $(".uploadResult ul");
 			
 			function showUploadedFile(uploadResultArr){
-			var str = "";
-			
-			$(uploadResultArr).each(function(i, obj){
-				// BoardAttachVO내부에서 이미지여부를  fileType변수에 저장하므로 obj.image -> obj.fileType
-				if(!obj.fileType){
-					var fileCallPath = encodeURIComponent(obj.uploadPath + "/" + obj.uuid + "_" + obj.fileName);
-					
-					str += "<li "
-						+ "data-path='" + obj.uploadPath + "' data-uuid='" + obj.uuid
-						+ "' data-filename='" + obj.fileName + "' data-type='" +obj.fileType
-						+ "'><a href='/download?fileName=" + fileCallPath
-						+ "'>" + "<img src='/resources/free-icon-attached-file-1209914.png'>"
-						+ obj.fileName + "</a>"
-						+ "<span data-file=\'" + fileCallPath + "\'data-type='file'> X </span>"
-						+"</li>";
-					
-					
-					
-					
-					/* str += "<li><a href='/download?fileName=" + fileCallPath + "'>" + "<img src='/resources/free-icon-attached-file-1209914.png'>" + obj.fileName + "</a>"
-						+ "<span data-file=\'" + fileCallPath + "\' data-type='file'> X </span>"						
-						+ "</li>"; */
-				} else {
-					//str += "<li>" + obj.fileName + "</li>";
-					var fileCallPath = encodeURIComponent(obj.uploadPath + "/s_" + obj.uuid + "_" + obj.fileName);
-					
-					var fileCallPathOriginal = encodeURIComponent(obj.uploadPath + "/" + obj.uuid + "_" + obj.fileName);
-					console.log("파일경로 : " + fileCallPath);
-					
-					str += "<li "
-						+ "data-path='" + obj.uploadPath + "' data-uuid='" + obj.uuid
-						+ "' data-filename='" + obj.fileName + "' data-type='" +obj.fileType
-						+ "'><a href='/download?fileName=" + fileCallPathOriginal
-						+ "'>" + "<img src='/display?fileName=" + fileCallPath + "'>"
-						+ obj.fileName + "</a>"
-						+ "<span data-file=\'" + fileCallPath + "\'data-type='image'> X </span>"
-						+"</li>";
-					
-					/* 
-					str += "<li><a href='/download?fileName=" + fileCallPathOriginal + "'>" + "<img src='/display?fileName=" + fileCallPath + "'>" + obj.fileName + "</a>"
-						+ "<span data-file=\'" + fileCallPath + "\' data-type='fileType'> X </span>"
-						+ "</li>"; */
-				}
-			});
-			uploadResult.append(str);
+				var str = "";
+				
+				$(uploadResultArr).each(function(i, obj){
+					// BoardAttachVO내부에서 이미지여부를 fileType변수에 저장하므로 obj.image -> obj.fileType
+					if(!obj.fileType){
+						var fileCallPath = encodeURIComponent(obj.uploadPath + "/" + obj.uuid + "_" + obj.fileName);
+						
+						str += "<li "
+							+ "data-path='" + obj.uploadPath + "' data-uuid='" + obj.uuid
+							+ "' data-filename='" + obj.fileName + "' data-type='" + obj.fileType
+							+ "'><a href='/download?fileName=" + fileCallPath
+							+ "'>" + "<img src='/resources/free-icon-attached-file-1209914.png'>"
+							+ obj.fileName + "</a>"
+							+ "<span data-file=\'" + fileCallPath + "\' data-type='file'> X </span>"
+							+ "</li>";
+						
+						
+					} else {
+						//str += "<li>" + obj.fileName + "</li>";
+						var fileCallPath = encodeURIComponent(obj.uploadPath + "/s_" + obj.uuid + "_" + obj.fileName);
+						var fileCallPathOriginal = encodeURIComponent(obj.uploadPath + "/" + obj.uuid + "_" + obj.fileName);
+						
+						str += "<li "
+							+ "data-path='" + obj.uploadPath + "' data-uuid='" + obj.uuid
+							+ "' data-filename='" + obj.fileName + "' data-type='" + obj.fileType
+							+ "'><a href='/download?fileName=" + fileCallPathOriginal
+							+ "'>" + "<img src='/display?fileName="+ fileCallPath + "'>"
+							+ obj.fileName + "</a>"
+							+ "<span data-file=\'" + fileCallPath + "\' data-type='image'> X </span>"
+							+ "</li>";
+					}
+				});
+				uploadResult.append(str);
 			}// showUploadedfile
-			
 			
 			
 			$(".uploadResult").on("click", "span", function(e){
@@ -203,7 +193,7 @@
 			});// ajax
 		});	// click span
 		
-		// 제출버튼 누를 경우, 첨부파일 정보를 폼에 추가해서 전달하는 코드
+		// 글쓰기 버튼을 누를 경우, 첨부파일 정보를 폼에 추가해서 전달하는 코드
 		$("#submitBtn").on("click", function(e){
 			// 1. 제출버튼을 눌렀을때 바로 작동하지 않도록 기능막기
 			e.preventDefault();
@@ -211,11 +201,25 @@
 			// 2. var formObj = $("form");로 폼태그를 가져옵니다.
 			var formObj = $("form");
 			
+			var str = "";
+			
 			// 3. 5월 19이리 수업에서는 첨부파일 내에 들어있던 이미지 정보를 콘솔에 찍기만 하고 종료하고
 			// 내일 수업에 db에 넣는 부분까지 진행합니다.
 			$(".uploadResult ul li").each(function(i, obj){
-				console.log($(obj));
-			})
+				
+				var jobj = $(obj);
+				console.log(jobj);
+				str += "<input type='hidden' name='attachList[" + i + "].fileName'"
+				+ " value='" + jobj.data("filename") + "'>"
+				+ "<input type='hidden' name='attachList[" + i + "].uuid'"
+				+ " value='" + jobj.data("uuid") + "'>"
+				+ "<input type='hidden' name='attachList[" + i + "].uploadPath'"
+				+ " value='" + jobj.data("path") + "'>"
+				+ "<input type='hidden' name='attachList[" + i + "].fileType'"
+				+ " value='" + jobj.data("type") + "'>";
+			});
+			// 폼태그에 위의 str내부 태그를 추가해주는 명령어, .submit()을 추가로 넣으면 제출 완료
+			formObj.append(str).submit();
 		});
 			
 			}); //document 닫는부분
